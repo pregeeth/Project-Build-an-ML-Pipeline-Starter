@@ -29,8 +29,15 @@ def go(args):
     # Convert last_review to datetime
     df['last_review'] = pd.to_datetime(df['last_review'])
 
+    # Geographic filtering to remove data points outside NYC boundaries
+    # This ensures all data points are within proper NYC coordinates
+    logger.info("Filtering data points outside NYC boundaries")
+    before_geo_filter = len(df)
     idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
     df = df[idx].copy()
+    after_geo_filter = len(df)
+    logger.info(f"Removed {before_geo_filter - after_geo_filter} data points outside NYC boundaries")
+    
     # Save the cleaned file
     df.to_csv('clean_sample.csv',index=False)
 
